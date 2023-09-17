@@ -4,9 +4,9 @@ import time
 
 import metapy
 import pytoml
-import random
+#import random
 
-random.seed(100000)
+#random.seed(100000)
 
 class InL2Ranker(metapy.index.RankingFunction):
     """
@@ -23,19 +23,19 @@ class InL2Ranker(metapy.index.RankingFunction):
         For fields available in the score_data sd object,
         @see https://meta-toolkit.org/doxygen/structmeta_1_1index_1_1score__data.html
         """
-        tfn = sd.doc_term_count * math.log2(1.0 + ( sd.avg_dl / sd.doc_size))
-        k = sd.query_term_weight*(tfn/(tfn+self.param)) *math.log2( (sd.num_docs+1)/(sd.corpus_term_count+.5))
-        return k
+        tfn = sd.doc_term_count * math.log(1.0 + sd.avg_dl / sd.doc_size,2)
+        middle_term = tfn / (tfn + self.param)
+        sub_term = (sd.num_docs + 1) / (sd.corpus_term_count + 0.5)
+        return sd.query_term_weight * middle_term * math.log(sub_term,2)
         #return (self.param + sd.doc_term_count) / (self.param * sd.doc_unique_terms + sd.doc_size)
 
-#def load_ranker(cfg_file):
-def load_ranker(cfg_file, some_param):
+def load_ranker(cfg_file):
     """
     Use this function to return the Ranker object to evaluate, e.g. return InL2Ranker(some_param=1.0) 
     The parameter to this function, cfg_file, is the path to a
     configuration file used to load the index. You can ignore this for MP2.
     """
-    return InL2Ranker(some_param)
+    return InL2Ranker(some_param=1.0)
     #return metapy.index.JelinekMercer()
 
 if __name__ == '__main__':
