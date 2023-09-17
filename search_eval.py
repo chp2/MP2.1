@@ -4,6 +4,9 @@ import time
 
 import metapy
 import pytoml
+import random
+
+random.seed(100000)
 
 class InL2Ranker(metapy.index.RankingFunction):
     """
